@@ -1,0 +1,93 @@
+{
+  "name": "tailwind-css-language-mode-formatter",
+  "displayName": "Tailwind CSS Language Mode Formatter",
+  "description": "Formatter for the Tailwind CSS language mode.",
+  "icon": "materials/logo.png",
+  "version": "0.0.1",
+  "author": "Misha Lestev",
+  "license": "MIT",
+  "publisher": "MishaLestev",
+  "engines": {
+    "vscode": "^1.72.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "contributes": {
+    "languages": [
+      {
+        "id": "tailwindcss",
+        "extensions": [
+          ".css"
+        ],
+        "aliases": [
+          "Tailwind CSS"
+        ]
+      }
+    ],
+    "commands": [
+      {
+        "command": "tailwindCSSLanguageModeFormatter.format",
+        "title": "/tailwind Format File"
+      }
+    ],
+    "configurationDefaults": {
+      "[tailwindcss]": {
+        "editor.defaultFormatter": "MishaLestev.tailwind-css-language-mode-formatter"
+      }
+    },
+    "configuration": {
+      "title": "Tailwind CSS Language Mode Formatter",
+      "properties": {
+        "tailwind-css-language-mode-formatter.formatStyle": {
+          "type": "string",
+          "enum": [
+            "minimized",
+            "regular"
+          ],
+          "default": "regular",
+          "description": "Defines the CSS formatting style: regular or minimized."
+        },
+        "tailwind-css-language-mode-formatter.indentSize": {
+          "type": "number",
+          "default": 2,
+          "description": "Defines the number of spaces for indentation."
+        },
+        "tailwind-css-language-mode-formatter.useTabs": {
+          "type": "boolean",
+          "default": false,
+          "description": "If true, tabs are used instead of spaces for indentation."
+        }
+      }
+    }
+  },
+  "activationEvents": [
+    "onLanguage:tailwindcss"
+  ],
+  "main": "./out/extension.js",
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "tsc -p ./",
+    "watch": "tsc -watch -p ./",
+    "pretest": "npm run compile && npm run lint",
+    "lint": "eslint src",
+    "test": "vscode-test"
+  },
+  "devDependencies": {
+    "@types/clean-css": "^4.2.11",
+    "@types/js-beautify": "^1.14.3",
+    "@types/mocha": "^10.0.9",
+    "@types/node": "20.x",
+    "@types/vscode": "^1.95.0",
+    "@typescript-eslint/eslint-plugin": "^8.10.0",
+    "@typescript-eslint/parser": "^8.7.0",
+    "@vscode/test-cli": "^0.0.10",
+    "@vscode/test-electron": "^2.4.1",
+    "eslint": "^9.13.0",
+    "typescript": "^5.6.3"
+  },
+  "dependencies": {
+    "clean-css": "^5.3.3",
+    "js-beautify": "^1.15.1"
+  }
+}
