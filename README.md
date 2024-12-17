@@ -1,8 +1,8 @@
 # Tailwind CSS Language Mode Formatter VS Code Extension
 
-**Tailwind CSS Language Mode Formatter** is a Visual Studio Code extension that formats files with `.css` extention if the language mode of this file is set to `Tailwind CSS`.
+**Tailwind CSS Language Mode Formatter** is a Visual Studio Code extension that formats `.css` files when their language mode is set to `Tailwind CSS`.
 
-> Extension is made when custom css has to be added in stylesheet, since there is no Tailwind CSS formatter by default.
+> This extension was created to address the need for formatting custom CSS within Tailwind projects, as Visual Studio Code does not provide a built-in Tailwind CSS formatter.
 
 ---
 
@@ -57,6 +57,15 @@ To customize the formatter, you can:
 
 ## For more information
 My email is lestev.mi@gmail.com
+
+## Credits
+
+This project leverages the following open-source libraries:
+
+- **[cssbeautify](https://github.com/senchalabs/cssbeautify)** – For formatting CSS code.
+- **[clean-css](https://github.com/clean-css/clean-css)** – For minifying CSS code.
+
+Thanks for their outstanding work.
 
 ## To Support
 There's no greater support than if you read this [book](https://m.egwwritings.org/en/book/130.4).
