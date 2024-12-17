@@ -1,16 +1,16 @@
-import * as vscode from 'vscode';
-import { css_beautify } from 'js-beautify'; // Import css_beautify for formatting
-import CleanCSS from 'clean-css'; // Import CleanCSS for minification
+import * as vscode from "vscode";
+import CleanCSS from "clean-css"; // css minification library
+import cssbeautify from "cssbeautify"; // css formatting library
 
 export function activate(context: vscode.ExtensionContext) {
     console.log("Tailwind CSS Formatter Extension Activated");
 
-    const provider = vscode.languages.registerDocumentFormattingEditProvider('tailwindcss', {
+    const provider = vscode.languages.registerDocumentFormattingEditProvider("tailwindcss", {
         provideDocumentFormattingEdits(document: vscode.TextDocument): vscode.TextEdit[] {
             const edits: vscode.TextEdit[] = [];
             const text = document.getText();
-            const config = vscode.workspace.getConfiguration('tailwind-css-language-mode-formatter');
-            const style = config.get<string>('formatStyle', 'regular'); // Default to regular style
+            const config = vscode.workspace.getConfiguration("tailwind-css-language-mode-formatter");
+            const style = config.get<string>("formatStyle", "regular"); // Default to regular style
 
             // Apply the correct formatting/minification style
             const formattedText = applyStyle(text, style, config);
@@ -32,23 +32,21 @@ export function activate(context: vscode.ExtensionContext) {
 
 // Function to apply the selected formatting or minification style
 function applyStyle(text: string, style: string, config: vscode.WorkspaceConfiguration): string {
-    const useTabs = config.get<boolean>('useTabs', false);
-    const indentSize = config.get<number>('indentSize', 2);
-
-    const beautifyOptions = {
-        indent_size: useTabs ? 1 : indentSize, // `indent_size` must be 1 when using tabs
-        indent_char: useTabs ? '\t' : ' ', // Use tabs or spaces
-        preserve_newlines: true,
-        max_preserve_newlines: style === 'regular' ? 2 : 1,
-        space_around_combinator: true,
-    };
+    const useTabs = config.get<boolean>("useTabs", false);
+    const indentSize = config.get<number>("indentSize", 2);
+    const useAutoSemicolon = config.get<boolean>("useAutoSemicolon", true);
+    const openBracePlacement = config.get<any>("openBracePlacement", "end-of-line"); // "end-of-line" or "separate-line"
 
     switch (style) {
-        case 'minimized':
+        case "minimized":
             return new CleanCSS({}).minify(text).styles; // Minify CSS
-        case 'regular':
+        case "regular":
         default:
-            return css_beautify(text, beautifyOptions);
+            return cssbeautify(text, {
+                indent: useTabs ? "\t" : " ".repeat(indentSize),
+                openbrace: openBracePlacement,
+                autosemicolon: useAutoSemicolon,
+            });
     }
 }
 

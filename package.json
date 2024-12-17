@@ -1,9 +1,9 @@
 {
   "name": "tailwind-css-language-mode-formatter",
   "displayName": "Tailwind CSS Language Mode Formatter",
-  "description": "Formatter for the Tailwind CSS language mode.",
+  "description": "A powerful formatter for Tailwind CSS files",
   "icon": "materials/logo.png",
-  "version": "0.0.1",
+  "version": "1.0.1",
   "author": "Misha Lestev",
   "license": "MIT",
   "publisher": "MishaLestev",
@@ -19,7 +19,18 @@
   },
   "homepage": "https://github.com/LestevMisha/Tailwind-CSS-Language-Mode-Formatter#readme",
   "categories": [
-    "Other"
+    "Formatters"
+  ],
+  "keywords": [
+    "tailwindcss formatter",
+    "tailwind formatter",
+    "tailwindcss",
+    "formatter",
+    "tailwind",
+    "language mode",
+    "css",
+    "style",
+    "visual studio code"
   ],
   "contributes": {
     "languages": [
@@ -44,6 +55,13 @@
         "editor.defaultFormatter": "MishaLestev.tailwind-css-language-mode-formatter"
       }
     },
+    "formatters": [
+      {
+        "language": "tailwindcss",
+        "provideDocumentFormattingEdits": true,
+        "displayName": "Tailwind CSS Language Mode Formatter"
+      }
+    ],
     "configuration": {
       "title": "Tailwind CSS Language Mode Formatter",
       "properties": {
@@ -65,6 +83,20 @@
           "type": "boolean",
           "default": false,
           "description": "If true, tabs are used instead of spaces for indentation."
+        },
+        "tailwind-css-language-mode-formatter.useAutoSemicolon": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically inserts a trailing semicolon at the end of each CSS property declaration if it's missing."
+        },
+        "tailwind-css-language-mode-formatter.openBracePlacement": {
+          "type": "string",
+          "enum": [
+            "end-of-line",
+            "separate-line"
+          ],
+          "default": "end-of-line",
+          "description": "Defines where the opening curly brace '{' appears: on the same line as the selector ('end-of-line') or on a new line ('separate-line')."
         }
       }
     }
@@ -83,6 +115,7 @@
   },
   "devDependencies": {
     "@types/clean-css": "^4.2.11",
+    "@types/cssbeautify": "^0.3.5",
     "@types/js-beautify": "^1.14.3",
     "@types/mocha": "^10.0.9",
     "@types/node": "20.x",
@@ -96,6 +129,6 @@
   },
   "dependencies": {
     "clean-css": "^5.3.3",
-    "js-beautify": "^1.15.1"
+    "cssbeautify": "^0.3.1"
   }
 }
