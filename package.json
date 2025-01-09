@@ -3,7 +3,7 @@
   "displayName": "Tailwind CSS Language Mode Formatter",
   "description": "A powerful formatter for Tailwind CSS files",
   "icon": "materials/logo.jpg",
-  "version": "1.0.2",
+  "version": "1.1.4",
   "author": "Misha Lestev",
   "license": "MIT",
   "publisher": "MishaLestev",
@@ -97,6 +97,11 @@
           ],
           "default": "end-of-line",
           "description": "Defines where the opening curly brace '{' appears: on the same line as the selector ('end-of-line') or on a new line ('separate-line')."
+        },
+        "tailwind-css-language-mode-formatter.autoClassSorting": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically sorts Tailwind CSS classes in the recommended class order."
         }
       }
     }

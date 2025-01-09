@@ -14,6 +14,7 @@ Ensure you are using the Tailwind CSS Language Mode, check the screenshot below.
 
 ## Features
 
+- Automatically sorts Tailwind CSS classes inside `css` files ⚡️.
 - Formats Tailwind CSS code efficiently.
 - Supports CSS **minification** for production-ready code.
 - Provides customizable formatting options for indentation, brace placement, and semicolon handling.
@@ -32,6 +33,7 @@ Below are the available settings for the formatter:
 | `tailwind-css-language-mode-formatter.openBracePlacement` | `string`  | `"end-of-line"`   | Specifies the placement of opening curly braces `{`. Options: `"end-of-line"` or `"separate-line"`.      |
 | `tailwind-css-language-mode-formatter.useAutoSemicolon` | `boolean` | `true`            | Automatically inserts a trailing semicolon at the end of each CSS property declaration.                  |
 | `tailwind-css-language-mode-formatter.useTabs`      | `boolean` | `false`           | Uses tabs for indentation instead of spaces when set to `true`.                                          |
+| `tailwind-css-language-mode-formatter.autoClassSorting`      | `boolean` | `true`           | Automatically sorts Tailwind CSS classes in the [recommended class order](https://tailwindcss.com/blog/automatic-class-sorting-with-prettier#how-classes-are-sorted). `true`.                                          |
 
 ---
 
@@ -64,8 +66,9 @@ This project leverages the following open-source libraries:
 
 - **[cssbeautify](https://github.com/senchalabs/cssbeautify)** – For formatting CSS code.
 - **[clean-css](https://github.com/clean-css/clean-css)** – For minifying CSS code.
+- **[tailwind_formatter](https://github.com/100phlecs/tailwind_formatter)** spesifically [these 2 files](https://github.com/100phlecs/tailwind_formatter/tree/master/priv) - For ordered list of tailwind classes & variants.
 
 Thanks for their outstanding work.
 
-## To Support
-There's no greater support than if you read this [book](https://m.egwwritings.org/en/book/130.4).
+## Contributing
+The greatest contributing you may offer is by reading this [book](https://m.egwwritings.org/en/book/130.4). If you're on the verge of something or facing depression, this is your chance—take it.
