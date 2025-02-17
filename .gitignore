@@ -5,3 +5,4 @@ node_modules
 *.vsix
 materials/formatter.psd
 materials/logo.png
+.DS_Store

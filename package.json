@@ -3,7 +3,7 @@
   "displayName": "Tailwind CSS Language Mode Formatter",
   "description": "A powerful formatter for Tailwind CSS files",
   "icon": "materials/logo.jpg",
-  "version": "1.1.4",
+  "version": "1.2.4",
   "author": "Misha Lestev",
   "license": "MIT",
   "publisher": "MishaLestev",
@@ -72,7 +72,7 @@
             "regular"
           ],
           "default": "regular",
-          "description": "Defines the CSS formatting style: regular or minimized."
+          "description": "Defines the CSS formatting style: regular or minimized (Important! 'minimized' style removes comments and does not sort any classes)."
         },
         "tailwind-css-language-mode-formatter.indentSize": {
           "type": "number",
@@ -102,6 +102,16 @@
           "type": "boolean",
           "default": true,
           "description": "Automatically sorts Tailwind CSS classes in the recommended class order."
+        },
+        "tailwind-css-language-mode-formatter.spaceAroundSelectorSeparator": {
+          "type": "boolean",
+          "default": true,
+          "description": "Adds spacing around >, +, and ~ in selectors (e.g. `a > b`)."
+        },
+        "tailwind-css-language-mode-formatter.applyMaxLineLength": {
+          "type": "number",
+          "default": 80,
+          "description": "Defines the maximum number of characters allowed in a single line for the `@apply` directive. When the limit is exceeded, the content will automatically wrap to the next line."
         }
       }
     }
@@ -130,10 +140,10 @@
     "@vscode/test-cli": "^0.0.10",
     "@vscode/test-electron": "^2.4.1",
     "eslint": "^9.13.0",
+    "prettier": "^3.5.1",
     "typescript": "^5.6.3"
   },
   "dependencies": {
-    "clean-css": "^5.3.3",
     "cssbeautify": "^0.3.1"
   }
 }

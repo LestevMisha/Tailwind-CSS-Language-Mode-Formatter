@@ -17,7 +17,7 @@ Ensure you are using the Tailwind CSS Language Mode, check the screenshot below.
 - Automatically sorts Tailwind CSS classes inside `css` files ⚡️.
 - Formats Tailwind CSS code efficiently.
 - Supports CSS **minification** for production-ready code.
-- Provides customizable formatting options for indentation, brace placement, and semicolon handling.
+- Adjust indentation, brace placement, semicolon handling, and spacing around selector combinators.
 - Lightweight and simple to configure. 😊  
 
 ---
@@ -26,16 +26,19 @@ Ensure you are using the Tailwind CSS Language Mode, check the screenshot below.
 
 Below are the available settings for the formatter:
 
-| **Setting**                               | **Type**   | **Default**       | **Description**                                                                                          |
-|-------------------------------------------|------------|-------------------|----------------------------------------------------------------------------------------------------------|
-| `tailwind-css-language-mode-formatter.formatStyle` | `string`  | `"regular"`       | Defines the CSS formatting style. Options: `"regular"` (standard formatting) or `"minimized"` (minified). |
-| `tailwind-css-language-mode-formatter.indentSize`  | `number`  | `2`               | Sets the number of spaces for indentation. Accepts any positive integer.                                 |
-| `tailwind-css-language-mode-formatter.openBracePlacement` | `string`  | `"end-of-line"`   | Specifies the placement of opening curly braces `{`. Options: `"end-of-line"` or `"separate-line"`.      |
-| `tailwind-css-language-mode-formatter.useAutoSemicolon` | `boolean` | `true`            | Automatically inserts a trailing semicolon at the end of each CSS property declaration.                  |
-| `tailwind-css-language-mode-formatter.useTabs`      | `boolean` | `false`           | Uses tabs for indentation instead of spaces when set to `true`.                                          |
-| `tailwind-css-language-mode-formatter.autoClassSorting`      | `boolean` | `true`           | Automatically sorts Tailwind CSS classes in the [recommended class order](https://tailwindcss.com/blog/automatic-class-sorting-with-prettier#how-classes-are-sorted). `true`.                                          |
+| **Setting**                                                               | **Type**  | **Default**       | **Description**                                                                                                                                              |
+|---------------------------------------------------------------------------|-----------|-------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `tailwind-css-language-mode-formatter.formatStyle`                      | `string`  | `"regular"`       | Defines the CSS formatting style. Options: `"regular"` (standard formatting) or `"minimized"` (minified using a custom minimizer).                          |
+| `tailwind-css-language-mode-formatter.indentSize`                       | `number`  | `2`               | Sets the number of spaces for indentation. Accepts any positive integer.                                                                                     |
+| `tailwind-css-language-mode-formatter.openBracePlacement`               | `string`  | `"end-of-line"`   | Specifies the placement of opening curly braces `{`. Options: `"end-of-line"` or `"separate-line"`.                                                            |
+| `tailwind-css-language-mode-formatter.useAutoSemicolon`                 | `boolean` | `true`            | Automatically inserts a trailing semicolon at the end of each CSS property declaration.                                                                      |
+| `tailwind-css-language-mode-formatter.useTabs`                          | `boolean` | `false`           | Uses tabs for indentation instead of spaces when set to `true`.                                                                                              |
+| `tailwind-css-language-mode-formatter.autoClassSorting`                 | `boolean` | `true`            | Automatically sorts Tailwind CSS classes and variants in the recommended order. [More details](https://tailwindcss.com/blog/automatic-class-sorting-with-prettier#how-classes-are-sorted) |
+| `tailwind-css-language-mode-formatter.spaceAroundSelectorSeparator`     | `boolean` | `true`            | If enabled, adds a single space around selector combinators (e.g., transforms `.badge>*` to `.badge > *`).                                                     |
+| `tailwind-css-language-mode-formatter.applyMaxLineLength`               | `number`  | `80`              | Defines the maximum line length for sorted class lists. When exceeded, classes are reflowed onto new lines, preserving original indentation.                 |
 
 ---
+
 
 ## Example Configuration
 
@@ -50,7 +53,10 @@ To customize the formatter, you can:
     "tailwind-css-language-mode-formatter.indentSize": 2,
     "tailwind-css-language-mode-formatter.openBracePlacement": "end-of-line",
     "tailwind-css-language-mode-formatter.useAutoSemicolon": true,
-    "tailwind-css-language-mode-formatter.useTabs": false
+    "tailwind-css-language-mode-formatter.useTabs": false,
+    "tailwind-css-language-mode-formatter.autoClassSorting": true,
+    "tailwind-css-language-mode-formatter.spaceAroundSelectorSeparator": true,
+    "tailwind-css-language-mode-formatter.applyMaxLineLength": 80
 }
 ```
 
@@ -65,8 +71,7 @@ My email is lestev.mi@gmail.com
 This project leverages the following open-source libraries:
 
 - **[cssbeautify](https://github.com/senchalabs/cssbeautify)** – For formatting CSS code.
-- **[clean-css](https://github.com/clean-css/clean-css)** – For minifying CSS code.
-- **[tailwind_formatter](https://github.com/100phlecs/tailwind_formatter)** spesifically [these 2 files](https://github.com/100phlecs/tailwind_formatter/tree/master/priv) - For ordered list of tailwind classes & variants.
+- **[these 2 files from tailwind_formatter](https://github.com/100phlecs/tailwind_formatter/tree/master/priv)** - For ordered list of tailwind classes & variants.
 
 Thanks for their outstanding work.
 
