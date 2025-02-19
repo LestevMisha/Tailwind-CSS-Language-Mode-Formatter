@@ -3,7 +3,7 @@
   "displayName": "Tailwind CSS Language Mode Formatter",
   "description": "A powerful formatter for Tailwind CSS files",
   "icon": "materials/logo.jpg",
-  "version": "1.2.4",
+  "version": "1.2.5",
   "author": "Misha Lestev",
   "license": "MIT",
   "publisher": "MishaLestev",

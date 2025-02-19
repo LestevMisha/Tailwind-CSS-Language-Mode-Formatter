@@ -47,7 +47,7 @@ function applyStyle(text: string, style: string, config: vscode.WorkspaceConfigu
         case "minimized":
             // Use our custom minimizer instead of CleanCSS.
             return minimizeCss(text);
-            // break;
+        // break;
         case "regular":
         default:
             formattedText = cssbeautify(text, {
@@ -63,15 +63,66 @@ function applyStyle(text: string, style: string, config: vscode.WorkspaceConfigu
 
     // Add spacing around CSS combinators (>, +, ~) in selectors
     if (spaceAroundSelectorSeparator) {
-        formattedText = formatSelectorCombinators(formattedText);
+        formattedText = formatExcludingProtectedSegments(formattedText);
     }
 
-    // Sort classes and variants if enabled
-    if (autoClassSorting) {
-        return sortClassesAndVariants(formattedText, context, useTabs, indentSize, applyMaxLineLength);
-    }
-    return formattedText;
+    // Ensure proper indentation for deep nestings
+    formattedText = fixNestedIndentation(formattedText, indentSize, useTabs);
+
+    // // Sort classes and variants if enabled
+    return sortClassesAndVariants(formattedText, context, useTabs, indentSize, applyMaxLineLength, autoClassSorting);
 }
+
+function fixNestedIndentation(css: string, indentSize: number, useTabs: boolean): string {
+
+    const indentChar = useTabs ? "\t" : " ".repeat(indentSize);
+    let depth = 0;
+
+    const lines = css.split("\n");
+    const formattedLines: string[] = [];
+
+
+    for (let line of lines) {
+        line = line.trim();
+
+        // Decrease depth if closing bracket is at the start of the line
+        if (line.startsWith("}")) {
+            depth = Math.max(0, depth - 1);
+        }
+
+        // Apply correct indentation
+        formattedLines.push(indentChar.repeat(depth) + line);
+
+        // Increase depth if opening bracket is at the end of the line
+        if (line.endsWith("{")) {
+            depth++;
+        }
+    }
+
+    const nestedCss = formattedLines.join("\n");
+
+    // Match all property values (multi-line or single-line)
+    const propertyMatches = [...nestedCss.matchAll(/(?<!:)([a-zA-Z-]+:.+,)(?:\n\s*(.+),)*\n\s*(.+)(?!\s*\{)/g)];
+
+    // Filter only multi-line properties (values spanning multiple lines)
+    const multiLineProperties = propertyMatches
+        .map(match => match[0]) // Extract match content
+        .filter(prop => prop.includes("\n")); // Only consider multi-line props
+
+    let formattedCss = nestedCss;
+    for (let prop of multiLineProperties) {
+        // Increase indentation for each line in the multi-line property
+        const indentedProp = prop
+            .split("\n")
+            .map((line, index) => index === 0 ? line : indentChar + line)
+            .join("\n");
+
+        formattedCss = formattedCss.replace(prop, indentedProp);
+    }
+
+    return formattedCss;
+}
+
 
 function formatWithUnspacedColons(text: string): string {
     return text.split("\n").map(line => {
@@ -120,19 +171,44 @@ function removeCommentsSemicolons(css: string): string {
     return formattedLines.join("\n");
 }
 
-// NEW FUNCTION: Add spacing around combinators (e.g. .badge> * => .badge > *)
-function formatSelectorCombinators(text: string): string {
-    // This pattern will:
-    // - remove any existing spaces around >, +, ~
-    // - replace them with a single space on each side
-    return text
+function formatExcludingProtectedSegments(text: string): string {
+    // Regex to match the parts we want to skip formatting.
+    const exclusionRegex = /:[\s\S]*?((\S+?(:|;))|})/g;
+    let result = "";
+    let lastIndex = 0;
+    let match: RegExpExecArray | null;
+
+    // Loop over all matches of the exclusion regex.
+    while ((match = exclusionRegex.exec(text)) !== null) {
+        // Process text from the end of the last match to the start of this match.
+        let segment = text.slice(lastIndex, match.index);
+        // Add spacing around combinators in this segment.
+        segment = segment
+            .replace(/\s*>\s*/g, " > ")
+            .replace(/\s*~\s*/g, " ~ ")
+            .replace(/\s*\+\s*/g, " + ");
+
+        result += segment;
+        // Append the protected text unmodified.
+        result += match[0];
+        // Update lastIndex to continue after this match.
+        lastIndex = exclusionRegex.lastIndex;
+    }
+
+    // Process any trailing text after the last match.
+    let trailing = text.slice(lastIndex);
+    trailing = trailing
         .replace(/\s*>\s*/g, " > ")
-        .replace(/\s*\+\s*/g, " + ")
-        .replace(/\s*~\s*/g, " ~ ");
+        .replace(/\s*~\s*/g, " ~ ")
+        .replace(/\s*\+\s*/g, " + ");
+    result += trailing;
+
+    return result;
 }
 
 
-function sortClassesAndVariants(text: string, context: vscode.ExtensionContext, useTabs: boolean, indentSize: number, applyMaxLineLength: number): string {
+
+function sortClassesAndVariants(text: string, context: vscode.ExtensionContext, useTabs: boolean, indentSize: number, applyMaxLineLength: number, autoClassSorting: boolean): string {
 
     const classesPath = context.asAbsolutePath(path.join("resources", "classes.txt"));
     const variantsPath = context.asAbsolutePath(path.join("resources", "variants.txt"));
@@ -151,32 +227,38 @@ function sortClassesAndVariants(text: string, context: vscode.ExtensionContext, 
     const sortClassesAndVariantsInLine = (
         classString: string,
     ): string => {
+
+        let sortedTokens: string[] = [];
         // Split on whitespace or semicolon and filter out empties.
         const classArray = classString.split(/\s|;/).filter(Boolean);
+        if (autoClassSorting) {
 
-        // Separate variant tokens (e.g. "hover:bg-sky-800") using a regex.
-        let variants = classArray.filter((class_) => {
-            const match = class_.match(/\w+(?=:)/g);
-            return match && variantsList.includes(match[0]);
-        });
-        // Sort variants based on the order in variantsList.
-        if (variants.length >= 2) {
-            variants.sort(
-                (a, b) =>
-                    variantsList.indexOf(a.match(/\w+(?=:)/g)![0]) -
-                    variantsList.indexOf(b.match(/\w+(?=:)/g)![0])
-            );
+            // Separate variant tokens (e.g. "hover:bg-sky-800") using a regex.
+            let variants = classArray.filter((class_) => {
+                const match = class_.match(/\w+(?=:)/g);
+                return match && variantsList.includes(match[0]);
+            });
+            // Sort variants based on the order in variantsList.
+            if (variants.length >= 2) {
+                variants.sort(
+                    (a, b) =>
+                        variantsList.indexOf(a.match(/\w+(?=:)/g)![0]) -
+                        variantsList.indexOf(b.match(/\w+(?=:)/g)![0])
+                );
+            }
+
+            // The rest are regular classes.
+            let classes = classArray.filter((class_) => !variants.includes(class_));
+            // Sort regular classes based on classesList order.
+            if (classes.length >= 2) {
+                classes.sort((a, b) => classesList.indexOf(a) - classesList.indexOf(b));
+            }
+
+            // Combine the sorted tokens.
+            sortedTokens = classes.concat(variants);
+        } else {
+            sortedTokens = classArray;
         }
-
-        // The rest are regular classes.
-        const classes = classArray.filter((class_) => !variants.includes(class_));
-        // Sort regular classes based on classesList order.
-        if (classes.length >= 2) {
-            classes.sort((a, b) => classesList.indexOf(a) - classesList.indexOf(b));
-        }
-
-        // Combine the sorted tokens.
-        const sortedTokens = classes.concat(variants);
 
         // Reflow tokens into lines, ensuring that no line exceeds maxLineLength.
         const lines: string[] = [];
@@ -192,7 +274,7 @@ function sortClassesAndVariants(text: string, context: vscode.ExtensionContext, 
                 if (currentLine.length + 1 + token.length > applyMaxLineLength) {
                     // Push the current line and start a new one.
                     if (checker) {
-                        lines.push(`${useTabs ? "\t\t" : " ".repeat(indentSize + 2)}${currentLine}`);
+                        lines.push(`${useTabs ? "\t\t" : " ".repeat(indentSize * 2)}${currentLine}`);
                     } else {
                         lines.push(currentLine);
                         checker = true;
@@ -206,7 +288,11 @@ function sortClassesAndVariants(text: string, context: vscode.ExtensionContext, 
         }
 
         if (currentLine) {
-            lines.push(`${useTabs ? "\t\t" : " ".repeat(indentSize + 2)}${currentLine}`);
+            if (currentLine.includes("@apply")) {
+                lines.push(currentLine);
+            } else {
+                lines.push(`${useTabs ? "\t\t" : " ".repeat(indentSize + 2)}${currentLine}`);
+            }
         }
 
         return lines.join("\n");
